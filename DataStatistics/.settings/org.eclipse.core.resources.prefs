@@ -1,0 +1,9 @@
+eclipse.preferences.version=1
+encoding//constant/table_parameter.py=utf-8
+encoding//entity/Terminal_feature.py=utf-8
+encoding//jdbc/connection.py=utf-8
+encoding//jdbc/query_table.py=utf-8
+encoding//statistics/passenger_duration.py=utf-8
+encoding//statistics/passenger_info_statistics.py=utf-8
+encoding//statistics/update_old_passenger.py=utf-8
+encoding/main.py=utf-8
