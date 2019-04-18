@@ -5,7 +5,7 @@ import datetime
 
 # 连接数据库
 def get_connection():
-    conn = cx_Oracle.connect('scott/tiger@localhost/orcl')  # 用户名/密码@服务器地址/数据库名称
+    conn = cx_Oracle.connect('scott/cf6024584@localhost/orcl')  # 用户名/密码@服务器地址/数据库名称
     return conn
 # 关闭连接
 def free(conn, cursor):
@@ -19,7 +19,7 @@ def get_plate_number(conn, HPZL):
 
     cr = conn.cursor()  # 生成连接的游标
 
-    sql = ("SELECT HPHM FROM TRFF_VEHICLE WHERE HPZL=%d AND ZT NOT LIKE '%s' and ZT NOT LIKE '%s' AND ZT NOT LIKE '%s'")%(HPZL,'%E%','%P%','%M%')        # 定义从TRFF_VEHICLE表中查询待统计车辆的sql语句
+    sql = ("SELECT HPHM FROM TRFF_VEHICLE WHERE HPZL=%d AND ZT NOT LIKE '%s' and ZT NOT LIKE '%s' AND ZT NOT LIKE '%s'AND ZT NOT LIKE '%s'")%(HPZL,'%E%','%B%','%M%','%C%')        # 定义从TRFF_VEHICLE表中查询待统计车辆的sql语句
     cr.execute(sql)                             # 执行sql语句
     # 下面的代码可以将查询结果分批量导入python的变量，避免炸内存
     plate_list_sql=[]
@@ -45,8 +45,8 @@ def plate_list_new(plate_list, str):
         plate_list_new.append(str_new)
     return plate_list_new
 
-# 按车牌字符串，查询非现场违法次数及处理状态统计
-def query_vio_surveil(conn, plate_list_new):
+# 按车牌字符串和号牌种类，查询非现场违法次数及处理状态统计
+def query_vio_surveil(conn, plate_list_new, HPZL):
     if conn == None:
         conn = get_connection()
     cr = conn.cursor()
@@ -54,7 +54,7 @@ def query_vio_surveil(conn, plate_list_new):
     total_surveil = []
     CL_surveil = []
     for i in range(query_num):
-        sql_surveil = "SELECT WFSJ, CLBJ FROM TRFF_VIO_SURVEIL WHERE HPHM='%s'"%(plate_list_new[i])
+        sql_surveil = "SELECT WFSJ, CLBJ FROM TRFF_VIO_SURVEIL WHERE HPZL=%d AND HPHM='%s'"%(HPZL,plate_list_new[i])
         cr.execute(sql_surveil)
         signal_result = cr.fetchall()
         if len(signal_result) == 0:         # 返回违章次数为0
@@ -93,25 +93,24 @@ def Insert_db(conn, result):
         conn.rollback()
 
     # 关闭游标、关闭数据库连接
-    cr.close()
-    conn.close()
+    free(conn, cr)
     return 0
 
 
 if __name__ == '__main__':
     starttime = datetime.datetime.now()
     conn = None
-    tup = get_plate_number(conn,22)
+    tup = get_plate_number(conn,2)      # 修改HPZL=1,2,15
     lis = plate_list(tup)
     lis_new = plate_list_new(lis,'皖')
     print(lis_new)
     print(len(lis_new))
 
-    total_surveil, CL_surveil = query_vio_surveil(conn,lis_new)
+    total_surveil, CL_surveil = query_vio_surveil(conn, lis_new, 2) # 修改HPZL=1,2,15
     print(total_surveil, CL_surveil)
     print("the total number of surveil is:", sum(total_surveil[0:]))
     print("the pending surveil is ", sum(total_surveil[0:])-sum(CL_surveil[0:]))
-    HPZL = HPZL_list(lis_new,22)         # 此时，HPZL = 1
+    HPZL = HPZL_list(lis_new,2)        # 修改HPZL=1,2,15
 
     result = Trans_DataFrame(lis_new,total_surveil,CL_surveil,HPZL)
     print(result)
@@ -120,7 +119,6 @@ if __name__ == '__main__':
 
     endtime = datetime.datetime.now()
     print("the program runs : %d s"%(endtime - starttime).seconds)
-
 
 
 
