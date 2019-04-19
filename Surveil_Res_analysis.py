@@ -84,20 +84,20 @@ if __name__ == '__main__':
     starttime = datetime.datetime.now()     # 统计程序的开始时刻
 
     conn = None
-    query_res = get_Plate_WFSL(conn,1)      # 修改HPZL=1,2,15
+    query_res = get_Plate_WFSL(conn,15)      # 修改HPZL=1,2,15
     print(query_res)
     print(len(query_res))
     HPHM, WFSL = query_conv(query_res)
     print(HPHM)
     print(WFSL)
-    print(len(HPHM))
+    # print(len(HPHM))
     x, y = cal_x_y(WFSL)
-    x_i, y_i = cal_x(WFSL, 11.1, x, y)      # 修改平均非现场违法数，对应HPZL=1,2,15
+    x_i, y_i = cal_x(WFSL, 3.5, x, y)      # 修改平均非现场违法数，对应HPZL=1,2,15
     print(x_i,y_i)
 
     # 画图展示计算结果
     # font = FontProperties(fname=r"c:\windows\fonts\simsun.ttc", size=15)
-    plt.plot(x,y,label=u"大型车",color='black')
+    plt.plot(x,y,label=u"挂车",color='black')    # 修改图例车型，对应HPZL=1,2,15
     plt.plot([0,x_i],[y_i, y_i],'r--')
     plt.plot([x_i,x_i],[0,y_i],'r--')
     plt.scatter(x_i, y_i, c='r',label='拐点')
