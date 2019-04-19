@@ -4,7 +4,7 @@ import cx_Oracle
 import datetime
 import matplotlib.pyplot as plt
 # from matplotlib.font_manager import FontProperties
-
+#
 # plt.rcParams['font.sans-serif']=['SimHei'] #用来正常显示中文标签,参考https://blog.csdn.net/GreenHandCGL/article/details/79814572
 
 def get_connection():
