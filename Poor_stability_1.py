@@ -1,6 +1,6 @@
 import cx_Oracle
 import datetime
-
+#
 def get_connection():
     conn = cx_Oracle.connect('scott/tiger@localhost/orcl')  # 用户名/密码@服务器地址/数据库名称
     return conn
