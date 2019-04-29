@@ -114,8 +114,7 @@ if __name__ == '__main__':
     Danger_Tp = Danger_type_list(dangerous_HPHM,'B') #  修改'B'（报废）为其他
     result = Trans_DataFrame(dangerous_HPHM, dangerous_HPZL, WF_time_interval, Danger_Tp)
     print(result)
-    print(type(result[0][2]))
-    conn = None
+    print(len(result))
     Insert_db(conn, result)
 
     endtime = datetime.datetime.now()
