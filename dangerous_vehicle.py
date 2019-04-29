@@ -67,6 +67,35 @@ def get_dangerous_vehicle_t1(QZBFQZ, WFSJ_MAX, HPHM, HPZL):
             else: continue
         return dangerous_HPHM, dangerous_HPZL, WF_time_interval
 
+# 生成车牌号牌的危险类型标识的list（对应Dangerous_Vehicles表的Danger_Type字段）
+def Danger_type_list(dangerous_HPHM,danger_tp):
+    return [str(danger_tp)]*len(dangerous_HPHM)
+
+# 计算结果整理成批量插入SQL数据库所需要的格式
+def Trans_DataFrame(dangerous_HPHM, dangerous_HPZL, WF_time_interval, Danger_Type):         # 这3个list长度一致，等于所统计的车辆数
+    a = [dangerous_HPHM, dangerous_HPZL, WF_time_interval, Danger_Type]
+    return list(zip(*a))
+
+# 批量插入数据库
+def Insert_db(conn, result):
+    if conn == None:
+        conn = get_connection()
+    cr = conn.cursor()
+    # print('diaoyong')
+
+    sql = "INSERT INTO DANGEROUS_VEHICLES(HPHM, HPZL, WF_Time_Interval, Danger_Type) VALUES (:1, :2, :3, :4)"
+
+    try:
+        cr.executemany(sql, result)
+        conn.commit()
+        print('insert successfully!')
+    except:
+        conn.rollback()
+
+    # 关闭游标、关闭数据库连接
+    free(conn, cr)
+    return 0
+
 
 if __name__ == '__main__':
     starttime = datetime.datetime.now()  # 统计程序的开始时刻
@@ -77,11 +106,21 @@ if __name__ == '__main__':
     WFSJ_MAX = get_WFSJ_MAX(conn, HPHM, HPZL)
     # print(HPZL)
     # print(HPHM)
-    print(len(QZBFQZ))
+    # print(len(QZBFQZ))
     dangerous_HPHM, dangerous_HPZL, WF_time_interval = get_dangerous_vehicle_t1(QZBFQZ,WFSJ_MAX,HPHM,HPZL)
-    print(dangerous_HPZL)
-    print(dangerous_HPHM)
-    print(WF_time_interval)
+    # print(dangerous_HPZL)
+    # print(dangerous_HPHM)
+    # print(type(WF_time_interval[0]))
+    Danger_Tp = Danger_type_list(dangerous_HPHM,'B') #  修改'B'（报废）为其他
+    result = Trans_DataFrame(dangerous_HPHM, dangerous_HPZL, WF_time_interval, Danger_Tp)
+    print(result)
+    print(type(result[0][2]))
+    conn = None
+    Insert_db(conn, result)
+
+    endtime = datetime.datetime.now()
+    print("the program runs : %d s" % (endtime - starttime).seconds)
+
 
 
 

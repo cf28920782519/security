@@ -24,7 +24,7 @@ def dangerous_vehicle_type2_query(conn):
     cr.close()
     return query_res
 
-# 性能类型1的车辆
+# 性能类型2的车辆
 def query_conv(query_res,str):
     num = len(query_res)    # 获得查询结果的长度
     HPHM = []   # 号牌号码
