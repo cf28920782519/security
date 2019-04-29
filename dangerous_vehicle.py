@@ -19,7 +19,7 @@ def dangerous_vehicle_type1_query(conn):
     sql_vehilce = "SELECT HPHM,HPZL,QZBFQZ FROM TRFF_VEHICLE WHERE QZBFQZ<= to_date('2019-01-01','YYYY-MM-DD')" # 查询2019年1月1日之前的所有报废车的车牌、类型、报废日期
 
     cr.execute(sql_vehilce)
-    query_res = cr.fetchmany(1000)  # 查询结果为元组形式[(数据1),(数据2),(数据3)]
+    query_res = cr.fetchall()  # 查询结果为元组形式[(数据1),(数据2),(数据3)]
     return query_res
 # 性能类型1的车辆
 def query_conv(query_res,str):
